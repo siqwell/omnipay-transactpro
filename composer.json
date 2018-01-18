@@ -1,0 +1,25 @@
+{
+    "name": "siqwell/omnipay-transactpro",
+    "type": "library",
+    "description": "TransactPro driver for the Omnipay payment processing library",
+    "keywords": [
+        "gateway",
+        "merchant",
+        "omnipay",
+        "transactpro"
+    ],
+    "homepage": "https://github.com/siqwell/omnipay-transactpro",
+    "authors": [
+        {
+            "name": "Dmitry Podtyagin",
+            "email": "dmitry.podtyagin@gmail.com"
+        }
+    ],
+    "autoload": {
+        "psr-4": { "Omnipay\\TransactPro\\" : "src/" }
+    },
+    "require": {
+        "omnipay/common": "~2.0",
+        "transact-pro/gate": "^v1.0"
+    }
+}
