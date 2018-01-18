@@ -2,6 +2,7 @@
 
 namespace Omnipay\TransactPro\Message;
 
+use Omnipay\TransactPro\Client\Response\Response;
 use Omnipay\TransactPro\Message\PurchaseResponse;
 
 /**
@@ -29,74 +30,122 @@ class PurchaseRequest extends AbstractRequest
     /**
      * @param mixed $data
      *
-     * @return \Omnipay\Common\Message\ResponseInterface|PurchaseResponse
+     * @return array|\Omnipay\TransactPro\Message\PurchaseResponse
      */
     public function sendData($data)
     {
         $card = $this->getCard();
 
-        $response = null;
-        $changeResponse = null;
-        $error = null;
-        $transactionId = 0;
-
         try {
-            // Init transaction
-            $init     = $this->gateClient->init($data);
-            $response = $init->getParsedResponse();
+            $transaction = $this->initTransaction($data, $card);
 
-            if (isset($response['OK'])) {
-                $transactionId = $response['OK'];
+            if ($transaction instanceof PurchaseResponse) {
+                return $transaction;
             }
 
-            // Redirect on gateway if needed
-            if (isset($response['RedirectOnsite'])) {
-                $redirect = $response['RedirectOnsite'];
-
-                return $this->response = new PurchaseResponse($this, [
-                    'success' => true,
-                    'transactionId' => $transactionId,
-                    'redirect' => $redirect
-                ]);
-            }
-
-            if ($card) {
-                // Start charging
-                $chargeInit     = $this->gateClient->charge([
-                    'f_extended' => '5',
-                    'init_transaction_id' => $transactionId,
-                    'cc' => $card->getNumber(),
-                    'cvv' => $card->getCvv(),
-                    'expire' => $card->getExpiryDate('m/y')
-                ]);
-                $changeResponse = $chargeInit->getParsedResponse();
-
-                // If is successful
-                if ($chargeInit->isSuccessful()) {
-                    return $this->response = new PurchaseResponse($this, [
-                        'success' => true,
-                        'transactionId' => $transactionId,
-                        'redirect' => isset($changeResponse['RedirectOnsite']) ? $changeResponse['RedirectOnsite'] : false
-                    ]);
-                }
-            }
+            return $this->fail($transaction);
         } catch (\Exception $e) {
-            $error = $e->getMessage();
+            return $this->fail([
+                'error' => $e->getMessage()
+            ]);
+        }
+    }
+
+    /**
+     * @param $data
+     * @param $card
+     *
+     * @return Response|\Omnipay\TransactPro\Message\PurchaseResponse
+     */
+    protected function initTransaction($data, $card)
+    {
+        $transaction = null;
+
+        /** @var Response $init */
+        $init = $this->gateClient->init($data);
+
+        if ($init->isSuccessful()) {
+            $transaction = $init->getTransactionId();
         }
 
-        // Build error
-        if (!$error) {
-            if ($changeResponse && isset($changeResponse['ERROR'])) {
-                $error = $changeResponse['ERROR'];
-            } elseif (isset($response['ERROR'])) {
-                $error = $response['ERROR'];
-            }
+        if ($redirect = $init->getRedirectUrl()) {
+            return $this->success([
+                'transactionId' => $transaction,
+                'redirect' => $redirect
+            ]);
         }
 
-        return $this->response = new PurchaseResponse($this, [
-            'success' => false,
-            'transactionId' => $transactionId,
-            'error' => $error
+        if ($init->isSuccessful()) {
+            return $this->charge([
+                'transactionId' => $transaction,
+                'redirect' => false
+            ], $card);
+        }
+
+        return $init;
+    }
+
+    /**
+     * @param $transaction
+     * @param $card
+     *
+     * @return Response|\Omnipay\TransactPro\Message\PurchaseResponse
+     */
+    protected function charge($transaction, $card)
+    {
+        /** @var Response $charge */
+        $charge = $this->gateClient->charge([
+            'f_extended'          => '5',
+            'init_transaction_id' => $transaction,
+            'cc'                  => $card->getNumber(),
+            'cvv'                 => $card->getCvv(),
+            'expire'              => $card->getExpiryDate('m/y')
         ]);
+
+        if ($charge->isSuccessful()) {
+            return $this->success([
+                'transactionId' => $transaction,
+                'redirect' => $charge->getRedirectUrl()
+            ]);
+        }
+
+        return $charge;
+    }
+
+    /**
+     * @param $data
+     *
+     * @return \Omnipay\TransactPro\Message\PurchaseResponse
+     */
+    protected function success($data = [])
+    {
+        return $this->response = new PurchaseResponse($this, array_merge([
+            'success' => true
+        ], $data));
+    }
+
+    /**
+     * @param array $data
+     *
+     * @return \Omnipay\TransactPro\Message\PurchaseResponse
+     */
+    protected function fail($data = [])
+    {
+        if ($data instanceof Response) {
+            /** @var Response $data */
+            return $this->fail([
+                'error' => $data->getErrorMessage() ?? $data->getResponseContent()
+            ]);
+        }
+
+        if (!is_array($data)) {
+            $data = [
+                'error' => 'Something went wrong'
+            ];
+        }
+
+        return $this->response = new PurchaseResponse($this, array_merge([
+            'success' => false
+        ], $data));
     }
 }

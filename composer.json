@@ -11,15 +11,14 @@
     "homepage": "https://github.com/siqwell/omnipay-transactpro",
     "authors": [
         {
-            "name": "Dmitry Podtyagin",
-            "email": "dmitry.podtyagin@gmail.com"
+            "name": "Dmitry Podtyagin, Andrzej Wielski",
+            "email": "dmitry.podtyagin@gmail.com, mail@wielski.me"
         }
     ],
     "autoload": {
         "psr-4": { "Omnipay\\TransactPro\\" : "src/" }
     },
     "require": {
-        "omnipay/common": "~2.0",
-        "transact-pro/gate": "^v1.0"
+        "omnipay/common": "~2.0"
     }
 }

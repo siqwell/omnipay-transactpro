@@ -2,11 +2,9 @@
 
 namespace Omnipay\TransactPro\Message;
 
-use Guzzle\Http\ClientInterface;
 use Omnipay\Common\Message\AbstractRequest as OmnipayAbstractRequest;
-use Symfony\Component\HttpFoundation\Request as HttpRequest;
 use Omnipay\TransactPro\ParametersTrait;
-use TransactPRO\Gate\GateClient;
+use Omnipay\TransactPro\Client\GateClient;
 
 /**
  * Class AbstractRequest
