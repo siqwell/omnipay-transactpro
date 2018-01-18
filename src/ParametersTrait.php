@@ -175,4 +175,16 @@ trait ParametersTrait
     {
         return $this->setParameter('client', $value);
     }
+
+    /**
+     * Rewrite IP if needed
+     *
+     * @param $value
+     *
+     * @return mixed
+     */
+    public function setClientIp($value)
+    {
+        return $this->setParameter('clientIp', $value);
+    }
 }
