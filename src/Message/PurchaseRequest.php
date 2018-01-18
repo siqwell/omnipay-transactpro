@@ -17,14 +17,13 @@ class PurchaseRequest extends AbstractRequest
      */
     public function getData()
     {
-        $this->validate('amount', 'currency', 'guid', 'password', 'apiUrl');
-        $this->getCard()->validate();
+        $this->validate('amount', 'currency', 'guid', 'password', 'description');
 
-        $data = $this->getBaseData();
+        if ($card = $this->getCard()) {
+            $card->validate();
+        }
 
-        // TODO: merge data with custom purchase data
-
-        return $data;
+        return $this->getBaseData();
     }
 
     /**
@@ -34,49 +33,70 @@ class PurchaseRequest extends AbstractRequest
      */
     public function sendData($data)
     {
-        $transactionId = 0;
         $card = $this->getCard();
 
-        // Init transaction
-        $init = $this->gateClient->init($data);
-        $response = $init->getParsedResponse();
+        $response = null;
+        $changeResponse = null;
+        $error = null;
+        $transactionId = 0;
 
-        if (isset($response['OK'])) {
-            $transactionId = $response['OK'];
+        try {
+            // Init transaction
+            $init     = $this->gateClient->init($data);
+            $response = $init->getParsedResponse();
+
+            if (isset($response['OK'])) {
+                $transactionId = $response['OK'];
+            }
+
+            // Redirect on gateway if needed
+            if (isset($response['RedirectOnsite'])) {
+                $redirect = $response['RedirectOnsite'];
+
+                return $this->response = new PurchaseResponse($this, [
+                    'success' => true,
+                    'transactionId' => $transactionId,
+                    'redirect' => $redirect
+                ]);
+            }
+
+            if ($card) {
+                // Start charging
+                $chargeInit     = $this->gateClient->charge([
+                    'f_extended' => '5',
+                    'init_transaction_id' => $transactionId,
+                    'cc' => $card->getNumber(),
+                    'cvv' => $card->getCvv(),
+                    'expire' => $card->getExpiryDate('m/y')
+                ]);
+                $changeResponse = $chargeInit->getParsedResponse();
+
+                // If is successful
+                if ($chargeInit->isSuccessful()) {
+                    return $this->response = new PurchaseResponse($this, [
+                        'success' => true,
+                        'transactionId' => $transactionId,
+                        'redirect' => isset($changeResponse['RedirectOnsite']) ? $changeResponse['RedirectOnsite'] : false
+                    ]);
+                }
+            }
+        } catch (\Exception $e) {
+            $error = $e->getMessage();
         }
 
-        if (isset($response['RedirectOnsite'])) {
-            $redirect = $response['RedirectOnsite'];
-
-            return $this->response = new PurchaseResponse($this, [
-                'success' => true,
-                'transactionId' => $transactionId,
-                'redirect' => $redirect
-            ]);
-        }
-
-        // Start charging
-        $chargeInit = $this->gateClient->charge(array(
-            'f_extended'          => '5',
-            'init_transaction_id' => $transactionId,
-            'cc'                  => $card->getNumber(),
-            'cvv'                 => $card->getCvv(),
-            'expire'              => $card->getExpiryDate('m/y')
-        ));
-        $changeResponse = $chargeInit->getParsedResponse();
-
-        // If is successful
-        if ($chargeInit->isSuccessful()) {
-            return $this->response = new PurchaseResponse($this, [
-                'success' => true,
-                'transactionId' => $transactionId,
-                'redirect' => isset($changeResponse['RedirectOnsite']) ? $changeResponse['RedirectOnsite'] : false
-            ]);
+        // Build error
+        if (!$error) {
+            if ($changeResponse && isset($changeResponse['ERROR'])) {
+                $error = $changeResponse['ERROR'];
+            } elseif (isset($response['ERROR'])) {
+                $error = $response['ERROR'];
+            }
         }
 
         return $this->response = new PurchaseResponse($this, [
             'success' => false,
-            'transactionId' => $transactionId
+            'transactionId' => $transactionId,
+            'error' => $error
         ]);
     }
 }

@@ -2,6 +2,8 @@
 
 namespace Omnipay\TransactPro;
 
+use Omnipay\TransactPro\Support\Client;
+
 /**
  * Trait ParametersTrait
  * @package Omnipay\TransactPro
@@ -9,7 +11,7 @@ namespace Omnipay\TransactPro;
 trait ParametersTrait
 {
     /**
-     * Get User ID
+     * Get GUID
      * @return mixed
      */
     public function getGUID()
@@ -18,7 +20,7 @@ trait ParametersTrait
     }
 
     /**
-     * Set User ID
+     * Set GUID
      *
      * @param $value
      *
@@ -48,27 +50,6 @@ trait ParametersTrait
     public function setApiAddress($value)
     {
         return $this->setParameter('apiAddress', $value);
-    }
-
-    /**
-     * Get Live Flag
-     * @return mixed
-     */
-    public function getLive()
-    {
-        return $this->getParameter('live');
-    }
-
-    /**
-     * Set Live Flag
-     *
-     * @param $value
-     *
-     * @return mixed
-     */
-    public function setLive($value)
-    {
-        return $this->setParameter('live', $value);
     }
 
     /**
@@ -114,6 +95,28 @@ trait ParametersTrait
     }
 
     /**
+     * Set Routing string
+     *
+     * @param $value
+     *
+     * @return mixed
+     */
+    public function setRoutingString($value)
+    {
+        return $this->setParameter('routingString', $value);
+    }
+
+    /**
+     * Get Routing string
+     *
+     * @return mixed
+     */
+    public function getRoutingString()
+    {
+        return $this->getParameter('routingString');
+    }
+
+    /**
      * @param $value
      * @return mixed
      */
@@ -150,5 +153,26 @@ trait ParametersTrait
     public function setSiteAddress($value)
     {
         return $this->setParameter('siteAddress', $value);
+    }
+
+    /**
+     * Get Client
+     * @return mixed
+     */
+    public function getClient()
+    {
+        return new Client($this->getParameter('client'));
+    }
+
+    /**
+     * Set Client
+     *
+     * @param $value
+     *
+     * @return mixed
+     */
+    public function setClient($value)
+    {
+        return $this->setParameter('client', $value);
     }
 }

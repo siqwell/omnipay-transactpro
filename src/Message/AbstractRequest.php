@@ -33,19 +33,30 @@ abstract class AbstractRequest extends OmnipayAbstractRequest
     protected $gateClient;
 
     /**
-     * AbstractRequest constructor.
-     * @param ClientInterface $httpClient
-     * @param HttpRequest $httpRequest
+     * @param array $parameters
+     *
+     * @return OmnipayAbstractRequest
      */
-    public function __construct(ClientInterface $httpClient, HttpRequest $httpRequest)
+    public function initialize(array $parameters = [])
     {
-        $this->gateClient = new GateClient(array(
-            'apiUrl'    => $this->getSiteAddress(),
-            'guid'      => $this->getGUID(),
-            'pwd'       => $this->getPassword(),
-            'verifySSL' => $this->getVerifySsl()
-        ));
-        parent::__construct($httpClient, $httpRequest);
+        $initialize =  parent::initialize($parameters);
+
+        if (count($this->getParameters())) {
+            $config = [
+                'rs'        => $this->getRoutingString(),
+                'guid'      => $this->getGUID(),
+                'pwd'       => $this->getPassword(),
+                'verifySSL' => $this->getVerifySsl()
+            ];
+
+            if ($apiUrl = $this->getApiAddress()) {
+                $config['apiUrl'] = $apiUrl;
+            }
+
+            $this->gateClient = new GateClient($config);
+        }
+
+        return $initialize;
     }
 
     /**
@@ -66,14 +77,23 @@ abstract class AbstractRequest extends OmnipayAbstractRequest
     public function getBaseData()
     {
         return [
-            'merchant_transaction_id' => md5(time()), // TODO: Think about it
-            'amount' => round($this->getAmount() * 100),
-            'currency' => $this->getCurrency(),
-            'user_ip' => $this->getClientIp(),
-            'description' => $this->getDescription(),
-            'merchant_site_url' => $this->getSiteAddress(),
-            'custom_return_url' => $this->getReturnUrl(),
-            'custom_callback_url' => $this->getNotifyUrl()
+            'rs'                      => $this->getRoutingString(),
+            'merchant_transaction_id' => $this->getOrderId(),
+            'amount'                  => round($this->getAmount() * 100),
+            'currency'                => $this->getCurrency(),
+            'user_ip'                 => $this->getClientIp(),
+            'description'             => $this->getDescription(),
+            'merchant_site_url'       => $this->getSiteAddress(),
+            'custom_return_url'       => $this->getReturnUrl(),
+            'custom_callback_url'     => $this->getNotifyUrl(),
+
+            'name_on_card'            => $this->getClient()->getName(),
+            'phone'                   => $this->getClient()->getPhone(),
+            'email'                   => $this->getClient()->getEmail(),
+            'country'                 => $this->getClient()->getCountry(),
+            'city'                    => $this->getClient()->getCity(),
+            'street'                  => $this->getClient()->getStreet(),
+            'zip'                     => $this->getClient()->getZip()
         ];
     }
 }

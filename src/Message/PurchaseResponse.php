@@ -42,7 +42,7 @@ class PurchaseResponse extends AbstractResponse implements RedirectResponseInter
     {
         $data = $this->getData();
 
-        if ($data['redirect']) {
+        if (isset($data['redirect'])) {
             return true;
         }
 
@@ -88,9 +88,9 @@ class PurchaseResponse extends AbstractResponse implements RedirectResponseInter
      */
     public function getMessage()
     {
-        $data = $this->data();
+        $data = $this->getData();
 
-        return isset($data['transactionId']) ? $data['transactionId'] : null;
+        return $data['success'] ? 'Success' : $data['error'];
     }
 
     /**

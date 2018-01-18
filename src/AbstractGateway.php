@@ -4,12 +4,12 @@ namespace Omnipay\TransactPro;
 
 use Omnipay\Common\AbstractGateway as OmnipayAbstractGateway;
 use Omnipay\Common\Message\RequestInterface;
-use Omnipay\Payboutique\Message\CompletePurchaseRequest;
-use Omnipay\Payboutique\Message\PurchaseRequest;
+use Omnipay\TransactPro\Message\CompletePurchaseRequest;
+use Omnipay\TransactPro\Message\PurchaseRequest;
 
 /**
  * Class AbstractGateway
- * @package Omnipay\Payboutique
+ * @package Omnipay\TransactPro
  */
 abstract class AbstractGateway extends OmnipayAbstractGateway
 {

@@ -24,10 +24,11 @@ class Gateway extends AbstractGateway
     public function getDefaultParameters()
     {
         return [
-            'live' => true,
+            'apiUrl' => '',
             'guid' => '',
             'password' => '',
             'currency' => 'USD',
+            'routingString' => '',
             'verifySSL' => false
         ];
     }
