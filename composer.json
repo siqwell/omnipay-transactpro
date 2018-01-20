@@ -1,6 +1,7 @@
 {
     "name": "siqwell/omnipay-transactpro",
     "type": "library",
+    "license": "MIT",
     "description": "TransactPro driver for the Omnipay payment processing library",
     "keywords": [
         "gateway",
@@ -11,14 +12,20 @@
     "homepage": "https://github.com/siqwell/omnipay-transactpro",
     "authors": [
         {
-            "name": "Dmitry Podtyagin, Andrzej Wielski",
-            "email": "dmitry.podtyagin@gmail.com, mail@wielski.me"
+            "name": "Dmitry Podtyagin",
+            "email": "dmitry.podtyagin@gmail.com"
+        },
+        {
+            "name": "Andrzej Wielski",
+            "email": "mail@wielski.me"
         }
     ],
     "autoload": {
-        "psr-4": { "Omnipay\\TransactPro\\" : "src/" }
+        "psr-4": {
+            "Omnipay\\TransactPro\\" : "src/"
+        }
     },
     "require": {
-        "omnipay/common": "~2.0"
+        "omnipay/common": "~2.3"
     }
 }
