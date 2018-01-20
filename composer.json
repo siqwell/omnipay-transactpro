@@ -20,7 +20,9 @@
         }
     ],
     "autoload": {
-        "psr-4": { "Omnipay\\TransactPro\\" : "src/" }
+        "psr-4": {
+            "Omnipay\\TransactPro\\" : "src/"
+        }
     },
     "require": {
         "omnipay/common": "~2.0"
