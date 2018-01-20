@@ -1,6 +1,7 @@
 {
     "name": "siqwell/omnipay-transactpro",
     "type": "library",
+    "license": "MIT",
     "description": "TransactPro driver for the Omnipay payment processing library",
     "keywords": [
         "gateway",
@@ -25,6 +26,6 @@
         }
     },
     "require": {
-        "omnipay/common": "~2.0"
+        "omnipay/common": "~2.3"
     }
 }
