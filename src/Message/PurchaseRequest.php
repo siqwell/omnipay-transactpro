@@ -75,7 +75,7 @@ class PurchaseRequest extends AbstractRequest
             ]);
         }
 
-        if ($init->isSuccessful()) {
+        if ($init->isSuccessful() && $card) {
             return $this->charge([
                 'transactionId' => $transaction,
                 'redirect' => false

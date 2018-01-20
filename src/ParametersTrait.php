@@ -161,7 +161,8 @@ trait ParametersTrait
      */
     public function getClient()
     {
-        return new Client($this->getParameter('client'));
+        $client = $this->getParameter('client');
+        return new Client($client ? $client : []);
     }
 
     /**
