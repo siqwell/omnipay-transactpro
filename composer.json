@@ -11,8 +11,12 @@
     "homepage": "https://github.com/siqwell/omnipay-transactpro",
     "authors": [
         {
-            "name": "Dmitry Podtyagin, Andrzej Wielski",
-            "email": "dmitry.podtyagin@gmail.com, mail@wielski.me"
+            "name": "Dmitry Podtyagin",
+            "email": "dmitry.podtyagin@gmail.com"
+        },
+        {
+            "name": "Andrzej Wielski",
+            "email": "mail@wielski.me"
         }
     ],
     "autoload": {
