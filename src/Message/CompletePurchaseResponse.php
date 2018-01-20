@@ -14,7 +14,9 @@ class CompletePurchaseResponse extends AbstractResponse
      */
     public function isSuccessful()
     {
-        if ($this->getData() && $this->getData()->isSuccessful()) {
+        $response = $this->getData()->getParsedResponse();
+
+        if ($response && !isset($response['ERROR'])) {
             return true;
         }
         return false;

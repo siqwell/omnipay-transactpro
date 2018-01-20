@@ -101,4 +101,14 @@ class PurchaseResponse extends AbstractResponse implements RedirectResponseInter
     {
         return json_encode($this->getData());
     }
+
+    /**
+     * @return null|string
+     */
+    public function getTransactionId()
+    {
+        $data = $this->getData();
+        
+        return isset($data['transactionId']) ? $data['transactionId'] : null;
+    }
 }
