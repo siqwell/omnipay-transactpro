@@ -68,10 +68,10 @@ class PurchaseRequest extends AbstractRequest
             $transaction = $init->getTransactionId();
         }
 
-        if ($redirect = $init->getRedirectUrl() && !$card) {
+        if ($init->getRedirectUrl() && !$card) {
             return $this->success([
                 'transactionId' => $transaction,
-                'redirect' => $redirect
+                'redirect' => $init->getRedirectUrl()
             ]);
         }
 
@@ -98,8 +98,6 @@ class PurchaseRequest extends AbstractRequest
             'cvv'                 => $card->getCvv(),
             'expire'              => $card->getExpiryDate('m/y')
         ]);
-        print_r($charge);
-        die();
 
         if ($charge->isSuccessful()) {
             return $this->success([
