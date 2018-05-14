@@ -12,10 +12,6 @@
     "homepage": "https://github.com/siqwell/omnipay-transactpro",
     "authors": [
         {
-            "name": "Dmitry Podtyagin",
-            "email": "dmitry.podtyagin@gmail.com"
-        },
-        {
             "name": "Andrzej Wielski",
             "email": "mail@wielski.me"
         }
@@ -26,6 +22,6 @@
         }
     },
     "require": {
-        "omnipay/common": "~2.3"
+        "omnipay/common": "^3.0"
     }
 }
