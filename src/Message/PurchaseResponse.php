@@ -56,7 +56,9 @@ class PurchaseResponse extends AbstractResponse implements RedirectResponseInter
     {
         $data = $this->getData();
 
-        if ($data['redirect']) {
+        print_r($data);
+
+        if (isset($data['redirect'])) {
             return $data['redirect'];
         }
 

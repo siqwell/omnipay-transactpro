@@ -9,13 +9,6 @@
         "omnipay",
         "transactpro"
     ],
-    "homepage": "https://github.com/siqwell/omnipay-transactpro",
-    "authors": [
-        {
-            "name": "Andrzej Wielski",
-            "email": "mail@wielski.me"
-        }
-    ],
     "autoload": {
         "psr-4": {
             "Omnipay\\TransactPro\\" : "src/"
