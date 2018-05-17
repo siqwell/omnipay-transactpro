@@ -2,7 +2,7 @@
 
 namespace Omnipay\TransactPro\Message;
 
-use Omnipay\Common\Message\AbstractRequest as OmnipayAbstractRequest;
+use Omnipay\Common\Message\AbstractRequest as BaseAbstractRequest;
 use Omnipay\TransactPro\ParametersTrait;
 use Omnipay\TransactPro\Client\GateClient;
 
@@ -10,7 +10,7 @@ use Omnipay\TransactPro\Client\GateClient;
  * Class AbstractRequest
  * @package Omnipay\TransactPro\Message
  */
-abstract class AbstractRequest extends OmnipayAbstractRequest
+abstract class AbstractRequest extends BaseAbstractRequest
 {
     use ParametersTrait;
 
@@ -33,7 +33,7 @@ abstract class AbstractRequest extends OmnipayAbstractRequest
     /**
      * @param array $parameters
      *
-     * @return OmnipayAbstractRequest
+     * @return BaseAbstractRequest
      */
     public function initialize(array $parameters = [])
     {
@@ -42,7 +42,7 @@ abstract class AbstractRequest extends OmnipayAbstractRequest
         if (count($this->getParameters())) {
             $config = [
                 'rs'        => $this->getRoutingString(),
-                'guid'      => $this->getGUID(),
+                'guid'      => $this->getGuid(),
                 'pwd'       => $this->getPassword(),
                 'verifySSL' => $this->getVerifySsl()
             ];
@@ -58,7 +58,7 @@ abstract class AbstractRequest extends OmnipayAbstractRequest
     }
 
     /**
-     * @return mixed
+     * @return array|mixed
      * @throws \Omnipay\Common\Exception\InvalidRequestException
      */
     public function getData()
@@ -76,12 +76,12 @@ abstract class AbstractRequest extends OmnipayAbstractRequest
     {
         return [
             'rs'                      => $this->getRoutingString(),
-            'merchant_transaction_id' => $this->getOrderId(),
             'amount'                  => round($this->getAmount() * 100),
             'currency'                => $this->getCurrency(),
             'user_ip'                 => $this->getClientIp(),
             'description'             => $this->getDescription(),
             'merchant_site_url'       => $this->getSiteAddress(),
+            'merchant_transaction_id' => $this->getOrderId(),
             'custom_return_url'       => $this->getReturnUrl(),
             'custom_callback_url'     => $this->getNotifyUrl(),
 

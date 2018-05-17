@@ -2,20 +2,25 @@
 
 namespace Omnipay\TransactPro;
 
+use Omnipay\Common\AbstractGateway;
+use Omnipay\Common\Message\RequestInterface;
+use Omnipay\TransactPro\Message\CompletePurchaseRequest;
+use Omnipay\TransactPro\Message\PurchaseRequest;
+
 /**
  * Class Gateway
  * @package Omnipay\TransactPro
  */
 class Gateway extends AbstractGateway
 {
-    const GATEWAY_NAME = 'TransactPro';
+    use ParametersTrait;
 
     /**
      * @return string
      */
     public function getName()
     {
-        return self::GATEWAY_NAME;
+        return 'TransactPro';
     }
 
     /**
@@ -24,12 +29,32 @@ class Gateway extends AbstractGateway
     public function getDefaultParameters()
     {
         return [
-            'apiUrl' => '',
-            'guid' => '',
-            'password' => '',
-            'currency' => 'USD',
+            'apiUrl'        => '',
+            'guid'          => '',
+            'password'      => '',
+            'currency'      => 'USD',
             'routingString' => '',
-            'verifySSL' => false
+            'verifySSL'     => false
         ];
+    }
+
+    /**
+     * @param array $options
+     *
+     * @return RequestInterface
+     */
+    public function purchase(array $options = []): RequestInterface
+    {
+        return $this->createRequest(PurchaseRequest::class, $options);
+    }
+
+    /**
+     * @param array $options
+     *
+     * @return RequestInterface
+     */
+    public function completePurchase(array $options = []): RequestInterface
+    {
+        return $this->createRequest(CompletePurchaseRequest::class, $options);
     }
 }

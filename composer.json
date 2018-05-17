@@ -17,4 +17,5 @@
     "require": {
         "omnipay/common": "^3.0"
     }
+
 }

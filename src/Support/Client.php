@@ -6,7 +6,8 @@ namespace Omnipay\TransactPro\Support;
  * Class Client
  * @package Omnipay\TransactPro\Support
  */
-class Client {
+class Client
+{
     /**
      * @var array
      */

@@ -14,7 +14,7 @@ trait ParametersTrait
      * Get GUID
      * @return mixed
      */
-    public function getGUID()
+    public function getGuid()
     {
         return $this->getParameter('guid');
     }
@@ -26,7 +26,7 @@ trait ParametersTrait
      *
      * @return mixed
      */
-    public function setGUID($value)
+    public function setGuid($value)
     {
         return $this->setParameter('guid', $value);
     }
@@ -118,6 +118,7 @@ trait ParametersTrait
 
     /**
      * @param $value
+     *
      * @return mixed
      */
     public function setOrderId($value)
@@ -156,16 +157,6 @@ trait ParametersTrait
     }
 
     /**
-     * Get Client
-     * @return mixed
-     */
-    public function getClient()
-    {
-        $client = $this->getParameter('client');
-        return new Client($client ? $client : []);
-    }
-
-    /**
      * Set Client
      *
      * @param $value
@@ -187,5 +178,16 @@ trait ParametersTrait
     public function setClientIp($value)
     {
         return $this->setParameter('clientIp', $value);
+    }
+
+    /**
+     * Get Client
+     * @return mixed
+     */
+    public function getClient()
+    {
+        $client = $this->getParameter('client');
+
+        return new Client($client ? $client : []);
     }
 }
