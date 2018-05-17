@@ -2,8 +2,8 @@
 
 namespace Omnipay\TransactPro\Message;
 
+use Omnipay\Common\Message\AbstractResponse;
 use Omnipay\TransactPro\Client\Response\Response;
-use Omnipay\TransactPro\Message\PurchaseResponse;
 
 /**
  * Class PurchaseRequest
@@ -12,137 +12,25 @@ use Omnipay\TransactPro\Message\PurchaseResponse;
 class PurchaseRequest extends AbstractRequest
 {
     /**
-     * @return mixed
-     * @throws \Omnipay\Common\Exception\InvalidCreditCardException
-     * @throws \Omnipay\Common\Exception\InvalidRequestException
-     */
-    public function getData()
-    {
-        $this->validate('amount', 'currency', 'guid', 'password', 'description');
-
-        if ($card = $this->getCard()) {
-            $card->validate();
-        }
-
-        return $this->getBaseData();
-    }
-
-    /**
      * @param mixed $data
      *
-     * @return array|\Omnipay\TransactPro\Message\PurchaseResponse
+     * @return AbstractResponse
      */
-    public function sendData($data)
+    public function sendData($data): AbstractResponse
     {
-        $card = $this->getCard();
-
-        try {
-            $transaction = $this->initTransaction($data, $card);
-
-            if ($transaction instanceof PurchaseResponse) {
-                return $transaction;
-            }
-
-            return $this->fail($transaction);
-        } catch (\Exception $e) {
-            return $this->fail([
-                'error' => $e->getMessage()
-            ]);
-        }
-    }
-
-    /**
-     * @param $data
-     * @param $card
-     *
-     * @return Response|\Omnipay\TransactPro\Message\PurchaseResponse
-     */
-    protected function initTransaction($data, $card)
-    {
-        $transaction = null;
-
         /** @var Response $init */
-        $init = $this->gateClient->init($data);
+        $data = $this->gate->init($data);
 
-        if ($init->isSuccessful()) {
-            $transaction = $init->getTransactionId();
-        }
-
-        if ($init->getRedirectUrl() && !$card) {
-            return $this->success([
-                'transactionId' => $transaction,
-                'redirect' => $init->getRedirectUrl()
+        if (!$redirect = $data->getRedirectUrl()) {
+            return new PurchaseResponse($this, [
+                'success' => false,
+                'error'   => $data->getErrorMessage() ?? $data->getResponseContent()
             ]);
         }
 
-        if ($init->isSuccessful() && $card) {
-            return $this->charge($transaction, $card);
-        }
-
-        return $init;
-    }
-
-    /**
-     * @param $transaction
-     * @param $card
-     *
-     * @return Response|\Omnipay\TransactPro\Message\PurchaseResponse
-     */
-    protected function charge($transaction, $card)
-    {
-        /** @var Response $charge */
-        $charge = $this->gateClient->charge([
-            'f_extended'          => '5',
-            'init_transaction_id' => $transaction,
-            'cc'                  => $card->getNumber(),
-            'cvv'                 => $card->getCvv(),
-            'expire'              => $card->getExpiryDate('m/y')
+        return new PurchaseResponse($this, [
+            'success'  => true,
+            'redirect' => $data->getRedirectUrl()
         ]);
-
-        if ($charge->isSuccessful()) {
-            return $this->success([
-                'transactionId' => $transaction,
-                'redirect' => $charge->getRedirectUrl()
-            ]);
-        }
-
-        return $charge;
-    }
-
-    /**
-     * @param $data
-     *
-     * @return \Omnipay\TransactPro\Message\PurchaseResponse
-     */
-    protected function success($data = [])
-    {
-        return $this->response = new PurchaseResponse($this, array_merge([
-            'success' => true
-        ], $data));
-    }
-
-    /**
-     * @param array $data
-     *
-     * @return \Omnipay\TransactPro\Message\PurchaseResponse
-     */
-    protected function fail($data = [])
-    {
-        if ($data instanceof Response) {
-            /** @var Response $data */
-            return $this->fail([
-                'error' => $data->getErrorMessage() ?? $data->getResponseContent()
-            ]);
-        }
-
-        if (!is_array($data)) {
-            $data = [
-                'error' => 'Something went wrong'
-            ];
-        }
-
-        return $this->response = new PurchaseResponse($this, array_merge([
-            'success' => false
-        ], $data));
     }
 }

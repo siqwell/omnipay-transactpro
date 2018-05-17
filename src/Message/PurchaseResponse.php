@@ -2,6 +2,8 @@
 
 namespace Omnipay\TransactPro\Message;
 
+use Omnipay\Common\Exception\InvalidRequestException;
+use Omnipay\Common\Message\AbstractResponse;
 use Omnipay\Common\Message\RedirectResponseInterface;
 
 /**
@@ -11,74 +13,34 @@ use Omnipay\Common\Message\RedirectResponseInterface;
 class PurchaseResponse extends AbstractResponse implements RedirectResponseInterface
 {
     /**
-     * Is successful
+     * Is the response successful?
+     *
      * @return bool
      */
     public function isSuccessful()
     {
-        return $this->getResultCode() === 1;
+        return ($this->data['success'] && $this->data['redirect']) ? true : false;
     }
 
     /**
-     * Return status code
-     * @return int
-     */
-    public function getResultCode()
-    {
-        $data = $this->getData();
-
-        if (!$data['success']) {
-            return 0;
-        }
-
-        return 1;
-    }
-
-    /**
-     * Is redirect
-     * @return string|bool
+     * @return bool
      */
     public function isRedirect()
     {
-        $data = $this->getData();
-
-        if (isset($data['redirect'])) {
-            return true;
-        }
-
-        return false;
+        return true;
     }
 
     /**
-     *
+     * @return bool|string
+     * @throws InvalidRequestException
      */
     public function getRedirectUrl()
     {
-        $data = $this->getData();
-
-        if (isset($data['redirect'])) {
-            return $data['redirect'];
+        if (!$this->data['success'] || !$this->data['redirect']) {
+            throw new InvalidRequestException($this->data['error']);
         }
 
-        return false;
-    }
-
-    /**
-     * Redirect method
-     * @return string
-     */
-    public function getRedirectMethod()
-    {
-        return 'GET';
-    }
-
-    /**
-     * Redirect data
-     * @return mixed
-     */
-    public function getRedirectData()
-    {
-        return [];
+        return $this->data['redirect'];
     }
 
     /**
@@ -88,13 +50,12 @@ class PurchaseResponse extends AbstractResponse implements RedirectResponseInter
      */
     public function getMessage()
     {
-        $data = $this->getData();
-
-        return $data['success'] ? 'Success' : $data['error'];
+        return $this->data['success'] ? 'Success' : $this->data['error'];
     }
 
     /**
      * @param bool $serialize
+     *
      * @return string
      */
     public function getTransactionReference($serialize = true)
@@ -107,8 +68,6 @@ class PurchaseResponse extends AbstractResponse implements RedirectResponseInter
      */
     public function getTransactionId()
     {
-        $data = $this->getData();
-        
-        return isset($data['transactionId']) ? $data['transactionId'] : null;
+        return isset($this->data['transactionId']) ? $this->data['transactionId'] : null;
     }
 }

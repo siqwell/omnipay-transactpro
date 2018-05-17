@@ -28,7 +28,7 @@ abstract class AbstractRequest extends BaseAbstractRequest
     /**
      * @var GateClient
      */
-    protected $gateClient;
+    protected $gate;
 
     /**
      * @param array $parameters
@@ -37,7 +37,7 @@ abstract class AbstractRequest extends BaseAbstractRequest
      */
     public function initialize(array $parameters = [])
     {
-        $initialize =  parent::initialize($parameters);
+        $initialize = parent::initialize($parameters);
 
         if (count($this->getParameters())) {
             $config = [
@@ -51,7 +51,7 @@ abstract class AbstractRequest extends BaseAbstractRequest
                 $config['apiUrl'] = $apiUrl;
             }
 
-            $this->gateClient = new GateClient($config);
+            $this->gate = new GateClient($config);
         }
 
         return $initialize;
@@ -63,7 +63,7 @@ abstract class AbstractRequest extends BaseAbstractRequest
      */
     public function getData()
     {
-        $this->validate('amount', 'currency', 'description');
+        $this->validate('amount', 'currency', 'guid', 'password', 'description');
 
         return $this->getBaseData();
     }
@@ -81,10 +81,9 @@ abstract class AbstractRequest extends BaseAbstractRequest
             'user_ip'                 => $this->getClientIp(),
             'description'             => $this->getDescription(),
             'merchant_site_url'       => $this->getSiteAddress(),
-            'merchant_transaction_id' => $this->getOrderId(),
+            'merchant_transaction_id' => $this->getTransactionId(),
             'custom_return_url'       => $this->getReturnUrl(),
             'custom_callback_url'     => $this->getNotifyUrl(),
-
             'name_on_card'            => $this->getClient()->getName(),
             'phone'                   => $this->getClient()->getPhone(),
             'email'                   => $this->getClient()->getEmail(),

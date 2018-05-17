@@ -2,8 +2,15 @@
 
 namespace Omnipay\TransactPro\Client\Builders;
 
+/**
+ * Class InitDataBuilder
+ * @package Omnipay\TransactPro\Client\Builders
+ */
 class InitDataBuilder extends Builder
 {
+    /**
+     * @return array
+     */
     public function build()
     {
         return array(
@@ -32,6 +39,9 @@ class InitDataBuilder extends Builder
         );
     }
 
+    /**
+     * @throws \Omnipay\TransactPro\Client\Exceptions\MissingFieldException
+     */
     protected function checkData()
     {
         $this->checkMandatoryField('rs');
@@ -48,8 +58,6 @@ class InitDataBuilder extends Builder
      */
     protected function getRemoteAddress()
     {
-        return isset($_SERVER['REMOTE_ADDR'])
-            ? $_SERVER['REMOTE_ADDR']
-            : '127.0.0.1';
+        return isset($_SERVER['REMOTE_ADDR']) ? $_SERVER['REMOTE_ADDR'] : '127.0.0.1';
     }
 }
