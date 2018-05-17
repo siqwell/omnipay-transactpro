@@ -2,6 +2,8 @@
 
 namespace Omnipay\TransactPro\Message;
 
+use Omnipay\Common\Message\AbstractResponse;
+
 /**
  * Class CompletePurchaseResponse
  * @package Omnipay\TransactPro\Message
