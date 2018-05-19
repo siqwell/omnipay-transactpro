@@ -22,12 +22,13 @@ class CompletePurchaseRequest extends AbstractRequest
 
     /**
      * @param $data
+     *
      * @return CompletePurchaseResponse
      */
     public function sendData($data)
     {
-        $response = $this->gateClient->statusRequest($data);
+        $response = $this->gate->statusRequest($data);
 
-        return $this->response = new CompletePurchaseResponse($this, $response);
+        return new CompletePurchaseResponse($this, $response);
     }
 }

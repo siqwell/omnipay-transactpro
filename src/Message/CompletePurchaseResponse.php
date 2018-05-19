@@ -21,6 +21,7 @@ class CompletePurchaseResponse extends AbstractResponse
         if ($response && !isset($response['ERROR'])) {
             return true;
         }
+
         return false;
     }
 
@@ -65,6 +66,7 @@ class CompletePurchaseResponse extends AbstractResponse
     {
         if (!$this->isSuccessful()) {
             header('Content-Type: text/plain; charset=utf-8', true, 401);
+
             return;
         }
 
