@@ -28,7 +28,7 @@ class CompletePurchaseResponse extends AbstractResponse
      */
     public function getTransactionId()
     {
-        if ($this->data && isset($this->data['ID'])) {
+        if (isset($this->data['ID'])) {
             return $this->data['ID'];
         }
 
