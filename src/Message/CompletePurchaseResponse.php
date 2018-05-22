@@ -16,9 +16,7 @@ class CompletePurchaseResponse extends AbstractResponse
      */
     public function isSuccessful()
     {
-        $response = $this->getData()->getParsedResponse();
-
-        if ($response && !isset($response['ERROR'])) {
+        if ($this->data && !isset($this->data['ERROR'])) {
             return true;
         }
 
@@ -30,10 +28,8 @@ class CompletePurchaseResponse extends AbstractResponse
      */
     public function getTransactionId()
     {
-        $response = $this->getData()->getParsedResponse();
-
-        if ($response && isset($response['ID'])) {
-            return $response['ID'];
+        if ($this->data && isset($this->data['ID'])) {
+            return $this->data['ID'];
         }
 
         return null;
@@ -44,14 +40,6 @@ class CompletePurchaseResponse extends AbstractResponse
      */
     public function getTransactionReference()
     {
-        return $this->getData()->getParsedResponse();
-    }
-
-    /**
-     * @return string
-     */
-    public function getMessage()
-    {
-        return $this->isSuccessful() ? 'Success ' . $this->getTransactionId() : 'Error ' . $this->getTransactionId();
+        return $this->data;
     }
 }

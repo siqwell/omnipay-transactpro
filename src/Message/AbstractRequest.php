@@ -40,18 +40,13 @@ abstract class AbstractRequest extends BaseAbstractRequest
         $initialize = parent::initialize($parameters);
 
         if (count($this->getParameters())) {
-            $config = [
+            $this->gate = new GateClient([
                 'rs'        => $this->getRoutingString(),
                 'guid'      => $this->getGuid(),
                 'pwd'       => $this->getPassword(),
-                'verifySSL' => $this->getVerifySsl()
-            ];
-
-            if ($apiUrl = $this->getApiAddress()) {
-                $config['apiUrl'] = $apiUrl;
-            }
-
-            $this->gate = new GateClient($config);
+                'verifySSL' => $this->getVerifySsl(),
+                'apiUrl'    => $this->getApiAddress()
+            ]);
         }
 
         return $initialize;

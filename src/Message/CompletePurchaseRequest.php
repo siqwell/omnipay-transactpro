@@ -14,9 +14,9 @@ class CompletePurchaseRequest extends AbstractRequest
     public function getData()
     {
         return [
+            'f_extended'          => '5',
             'request_type'        => 'transaction_status',
             'init_transaction_id' => $this->getTransactionId(),
-            'f_extended'          => '5'
         ];
     }
 
@@ -29,6 +29,6 @@ class CompletePurchaseRequest extends AbstractRequest
     {
         $response = $this->gate->statusRequest($data);
 
-        return new CompletePurchaseResponse($this, $response);
+        return new CompletePurchaseResponse($this, $response->getParsedResponse());
     }
 }

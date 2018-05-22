@@ -19,7 +19,7 @@ class PurchaseResponse extends AbstractResponse implements RedirectResponseInter
      */
     public function isSuccessful()
     {
-        return ($this->data['success'] && $this->data['redirect']) ? true : false;
+        return false;
     }
 
     /**
@@ -41,33 +41,5 @@ class PurchaseResponse extends AbstractResponse implements RedirectResponseInter
         }
 
         return $this->data['redirect'];
-    }
-
-    /**
-     * Transaction id.
-     *
-     * @return string|null
-     */
-    public function getMessage()
-    {
-        return $this->data['success'] ? 'Success' : $this->data['error'];
-    }
-
-    /**
-     * @param bool $serialize
-     *
-     * @return string
-     */
-    public function getTransactionReference($serialize = true)
-    {
-        return json_encode($this->getData());
-    }
-
-    /**
-     * @return null|string
-     */
-    public function getTransactionId()
-    {
-        return isset($this->data['transactionId']) ? $this->data['transactionId'] : null;
     }
 }
