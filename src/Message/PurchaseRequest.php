@@ -29,8 +29,9 @@ class PurchaseRequest extends AbstractRequest
         }
 
         return new PurchaseResponse($this, [
-            'success'  => true,
-            'redirect' => $data->getRedirectUrl()
+            'success'       => true,
+            'transactionId' => $data->getTransactionId(),
+            'redirect'      => $data->getRedirectUrl()
         ]);
     }
 }

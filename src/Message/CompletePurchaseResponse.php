@@ -26,11 +26,25 @@ class CompletePurchaseResponse extends AbstractResponse
     }
 
     /**
-     * @return bool
+     * @return mixed|null|string
      */
-    public function isRedirect()
+    public function getTransactionId()
     {
-        return false;
+        $response = $this->getData()->getParsedResponse();
+
+        if ($response && isset($response['ID'])) {
+            return $response['ID'];
+        }
+
+        return null;
+    }
+
+    /**
+     * @return null|string
+     */
+    public function getTransactionReference()
+    {
+        return $this->getData()->getParsedResponse();
     }
 
     /**
@@ -39,39 +53,5 @@ class CompletePurchaseResponse extends AbstractResponse
     public function getMessage()
     {
         return $this->isSuccessful() ? 'Success ' . $this->getTransactionId() : 'Error ' . $this->getTransactionId();
-    }
-
-    /**
-     * @return string
-     */
-    public function confirm()
-    {
-        $this->exitWith('OK:' . $this->getTransactionId());
-    }
-
-    /**
-     * @return string
-     */
-    public function error()
-    {
-        $this->exitWith('ERR:' . $this->getTransactionId());
-    }
-
-    /**
-     * @codeCoverageIgnore
-     *
-     * @param string $result
-     */
-    public function exitWith($result)
-    {
-        if (!$this->isSuccessful()) {
-            header('Content-Type: text/plain; charset=utf-8', true, 401);
-
-            return;
-        }
-
-        header('Content-Type: text/plain; charset=utf-8', true, 200);
-        echo $result;
-        exit;
     }
 }
