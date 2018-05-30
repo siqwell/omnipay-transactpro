@@ -16,7 +16,11 @@ class CompletePurchaseResponse extends AbstractResponse
      */
     public function isSuccessful()
     {
-        if ($this->data && !isset($this->data['ERROR'])) {
+        if (!$this->data || isset($this->data['ERROR'])) {
+            return false;
+        }
+
+        if (isset($this->data['Status']) && $this->data['Status'] === 'Success') {
             return true;
         }
 
